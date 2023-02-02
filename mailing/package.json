@@ -13,7 +13,8 @@
     "unit": "jest",
     "lint": "eslint '*.ts' --quiet --fix",
     "compile": "tsc",
-    "test": "npm run compile && npm run unit"
+    "test": "jest",
+    "test:watch": "jest --watch --coverage false"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.92",
