@@ -31,7 +31,7 @@ export class SESMailProvider implements IMailProvider {
                     },
                     Subject: {
                         Charset: 'UTF-8',
-                        Data: subject,
+                        Data: subject ?? '',
                     },
                 },
                 Source: from,
