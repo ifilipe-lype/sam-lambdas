@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
-import { ISendMailParams } from '../../src/MailProvider/IMailProvider';
+import { ISendMailPayload } from '../../src/usecases/SendMailUseCase';
 
-export function makeSendMailPayload(overrides: Partial<ISendMailParams> = {}): ISendMailParams {
+export function makeSendMailPayload(overrides: Partial<ISendMailPayload> = {}): ISendMailPayload {
     return Object.assign(
         {
             to: faker.internet.email(),
