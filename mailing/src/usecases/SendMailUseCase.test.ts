@@ -1,5 +1,5 @@
 import AppError from '../utils/AppError';
-import { IMailProvider } from '../MailProvider';
+import { IMailProvider } from '../provider';
 import { SendMailUseCase } from './SendMailUseCase';
 import { makeSendMailPayload } from '../../__tests__/fixtures';
 

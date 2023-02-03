@@ -1,7 +1,7 @@
 import AppError from '../utils/AppError';
-import { IMailProvider, ISendMailParams } from '../MailProvider/IMailProvider';
+import { IMailProvider, ISendMailParams } from '../provider/IMailProvider';
 import { isEmail } from '../utils/isEmail';
-import { parseMailTemplate } from '../MailProvider/parseMailTemplate';
+import { parseMailTemplate } from '../provider/parseMailTemplate';
 
 export interface ISendMailPayload extends ISendMailParams {
     template?: string;
