@@ -16,7 +16,7 @@ export class SESMailProvider implements IMailProvider {
         });
     }
 
-    async sendMail({ text, subject, from, to }: ISendMailParams): Promise<void> {
+    async sendMail({ text, html, subject, from, to }: ISendMailParams): Promise<void> {
         try {
             const params = {
                 Destination: {
@@ -26,7 +26,7 @@ export class SESMailProvider implements IMailProvider {
                     Body: {
                         Html: {
                             Charset: 'UTF-8',
-                            Data: text,
+                            Data: html ?? text,
                         },
                     },
                     Subject: {
