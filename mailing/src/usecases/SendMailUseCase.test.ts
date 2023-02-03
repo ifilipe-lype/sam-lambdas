@@ -1,20 +1,74 @@
+import AppError from '../errors/AppError';
+import { IMailProvider } from '../MailProvider';
 import { SendMailUseCase } from './SendMailUseCase';
-import { FakeMailProvider } from '../../__tests__/fixtures/FakeMailProvider';
+import { makeSendMailPayload } from '../../__tests__/fixtures';
+
+const MailProviderMock = jest.fn<IMailProvider, any>(() => ({
+    sendMail: jest.fn<Promise<void>, any>(),
+}));
+
+const sutFactory = () => {
+    const mailProviderMock = new MailProviderMock() as jest.Mocked<IMailProvider>;
+    const sendMailUseCase = new SendMailUseCase(mailProviderMock);
+
+    return Object.freeze({
+        mailProviderMock,
+        sendMailUseCase,
+    });
+};
 
 describe('SendMailUseCase', () => {
     let sendMailUseCase: SendMailUseCase;
 
     beforeEach(() => {
-        sendMailUseCase = new SendMailUseCase(new FakeMailProvider());
+        let { sendMailUseCase: sendMailUseCaseMock } = sutFactory();
+        sendMailUseCase = sendMailUseCaseMock;
     });
 
     it('Should instantiate class', () => {
         expect(sendMailUseCase).toBeDefined();
-        expect(sendMailUseCase instanceof SendMailUseCase).toBe(true);
-        expect(sendMailUseCase.execute instanceof Function).toBe(true);
+        expect(sendMailUseCase).toBeInstanceOf(SendMailUseCase);
+        expect(sendMailUseCase.execute).toBeInstanceOf(Function);
     });
 
-    it('Should fail for destination mail missing', async () => {
-        await expect(sendMailUseCase.execute({})).rejects.toThrow();
+    it('Should throw for invalid destination mail', async () => {
+        await expect(sendMailUseCase.execute(makeSendMailPayload({ to: '' }))).rejects.toThrow(
+            'Invalid destination email!',
+        );
+        await expect(sendMailUseCase.execute(makeSendMailPayload({ to: 'invalid.mail.com' }))).rejects.toThrow(
+            'Invalid destination email!',
+        );
+    });
+
+    it('Should throw for invalid source mail', async () => {
+        await expect(sendMailUseCase.execute(makeSendMailPayload({ from: '' }))).rejects.toThrow(
+            'Invalid source email!',
+        );
+        await expect(sendMailUseCase.execute(makeSendMailPayload({ from: 'invalid.mail.com' }))).rejects.toThrow(
+            'Invalid source email!',
+        );
+    });
+
+    it("Should handle  mailProvider's unexpected errors", async () => {
+        let { sendMailUseCase, mailProviderMock } = sutFactory();
+
+        mailProviderMock.sendMail.mockImplementation(() => {
+            throw new Error('Unexpected error!');
+        });
+
+        await expect(sendMailUseCase.execute(makeSendMailPayload())).rejects.toBeInstanceOf(AppError);
+        expect(mailProviderMock.sendMail).toHaveBeenCalledTimes(1);
+    });
+
+    it('Should throw for invalid template', async () => {
+        await expect(sendMailUseCase.execute(makeSendMailPayload({ template: 'non-existing' }))).rejects.toThrow();
+    });
+
+    it('Should not throw for valid payload', async () => {
+        await expect(sendMailUseCase.execute(makeSendMailPayload())).resolves.not.toThrow();
+    });
+
+    it('Should parse and send a template based mail', async () => {
+        await expect(sendMailUseCase.execute(makeSendMailPayload({ template: 'test' }))).resolves.not.toThrow();
     });
 });
