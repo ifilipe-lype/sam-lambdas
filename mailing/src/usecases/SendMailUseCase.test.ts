@@ -60,6 +60,21 @@ describe('SendMailUseCase', () => {
         expect(mailProviderMock.sendMail).toHaveBeenCalledTimes(1);
     });
 
+    it('Should throw if neither template nor text is provided', async () => {
+        await expect(
+            sendMailUseCase.execute(makeSendMailPayload({ template: undefined, text: undefined })),
+        ).rejects.toThrow();
+    });
+
+    it('Should not throw if either template or text is not provided', async () => {
+        await expect(
+            sendMailUseCase.execute(makeSendMailPayload({ template: 'test', text: undefined })),
+        ).resolves.not.toThrow();
+        await expect(
+            sendMailUseCase.execute(makeSendMailPayload({ template: undefined })),
+        ).resolves.not.toThrow();
+    });
+
     it('Should throw for invalid template', async () => {
         await expect(sendMailUseCase.execute(makeSendMailPayload({ template: 'non-existing' }))).rejects.toThrow();
     });
