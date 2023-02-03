@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import AppError from '../../errors/AppError';
+import AppError from '../../utils/AppError';
 
 import { IMailProvider, ISendMailParams } from '../IMailProvider';
 

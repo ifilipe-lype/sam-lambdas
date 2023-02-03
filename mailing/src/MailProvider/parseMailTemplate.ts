@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 import Handlebars from 'handlebars';
 
 import templates from './templates';
-import AppError from '../errors/AppError';
+import AppError from '../utils/AppError';
 
 export async function parseMailTemplate(template: string, data: Record<any, any>): Promise<Buffer | string> {
     if (!templates[template]) {

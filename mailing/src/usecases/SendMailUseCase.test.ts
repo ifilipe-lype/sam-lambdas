@@ -1,4 +1,4 @@
-import AppError from '../errors/AppError';
+import AppError from '../utils/AppError';
 import { IMailProvider } from '../MailProvider';
 import { SendMailUseCase } from './SendMailUseCase';
 import { makeSendMailPayload } from '../../__tests__/fixtures';

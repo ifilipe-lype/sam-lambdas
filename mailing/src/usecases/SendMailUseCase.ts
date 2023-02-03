@@ -1,4 +1,4 @@
-import AppError from '../errors/AppError';
+import AppError from '../utils/AppError';
 import { IMailProvider, ISendMailParams } from '../MailProvider/IMailProvider';
 import { isEmail } from '../utils/isEmail';
 import { parseMailTemplate } from '../MailProvider/parseMailTemplate';
