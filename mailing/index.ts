@@ -1,23 +1,36 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import SendMailUseCase from './src/usecases/SendMailUseCase';
+import { SESMailProvider } from './src/provider';
+import AppError from './src/utils/AppError';
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    let response: APIGatewayProxyResult;
+    const sendMailUseCase = new SendMailUseCase(new SESMailProvider());
+    const data = JSON.parse(event.body ?? '{}');
+
     try {
-        response = {
+        await sendMailUseCase.execute(data);
+        return {
             statusCode: 200,
             body: JSON.stringify({
-                message: 'hello world',
+                message: 'mail sent successfully',
             }),
         };
     } catch (err: unknown) {
-        console.error(err);
-        response = {
+        console.error(err); // Logging
+        if (err instanceof AppError) {
+            return {
+                statusCode: err.statusCode,
+                body: JSON.stringify({
+                    message: err.message,
+                }),
+            };
+        }
+
+        return {
             statusCode: 500,
             body: JSON.stringify({
-                message: err instanceof Error ? err.message : 'some error happened',
+                message: 'Unexpected error! please try again later.',
             }),
         };
     }
-
-    return response;
 };
