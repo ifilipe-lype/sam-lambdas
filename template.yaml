@@ -44,16 +44,28 @@ Resources:
       Architectures:
       - x86_64
       Events:
-        HelloWorld:
+        SendMail:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /send-mail
-            Method: get
+            Method: post
+
+      Policies:
+        - Statement:
+          - Sid: SESSendMailPolicy
+            Effect: Allow
+            Action:
+            - ses:SendRawMail
+            - ses:SendEmail
+            Resource: '*'
+
     Metadata: # Manage esbuild properties
       BuildMethod: esbuild
       BuildProperties:
         Minify: true
         Target: es2020
+        External: 
+          - 'aws-sdk'
         # Sourcemap: true # Enabling source maps will create the required NODE_OPTIONS environment variables on your lambda function during sam build
         EntryPoints:
         - index.ts
@@ -93,11 +105,11 @@ Outputs:
     Value: !GetAtt HelloWorldFunctionRole.Arn
   
   MailingApi:
-    Description: API Gateway endpoint URL for Prod stage for Hello World function
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+    Description: API Gateway endpoint URL for Prod stage for SendMail function
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/send-mail/"
   SendMailFunction:
-    Description: Hello World Lambda Function ARN
+    Description: SendMail Lambda Function ARN
     Value: !GetAtt SendMailFunction.Arn
   MailingIamRole:
-    Description: Implicit IAM Role created for Hello World function
+    Description: Implicit IAM Role created for SendMail function
     Value: !GetAtt SendMailFunctionRole.Arn
